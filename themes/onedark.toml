@@ -1,0 +1,50 @@
+# themectl theme definition: One Dark
+# Source: joshdick/onedark.vim / Atom One Dark
+
+[meta]
+name        = "onedark"
+label       = "One Dark"
+dark        = true
+
+[tools]
+vim         = "onedark"
+bat         = "OneHalfDark"
+vivid       = "one-dark"
+eza         = "one_dark"
+
+[tools.vim_extra]
+
+[tools.lightline]
+colorscheme = "one"
+
+[alacritty.primary]
+background = "#282c34"
+foreground = "#abb2bf"
+
+[alacritty.cursor]
+text   = "#282c34"
+cursor = "#528bff"
+
+[alacritty.selection]
+text       = "#abb2bf"
+background = "#3e4451"
+
+[alacritty.normal]
+black   = "#282c34"
+red     = "#e06c75"
+green   = "#98c379"
+yellow  = "#e5c07b"
+blue    = "#61afef"
+magenta = "#c678dd"
+cyan    = "#56b6c2"
+white   = "#abb2bf"
+
+[alacritty.bright]
+black   = "#545862"
+red     = "#e06c75"
+green   = "#98c379"
+yellow  = "#e5c07b"
+blue    = "#61afef"
+magenta = "#c678dd"
+cyan    = "#56b6c2"
+white   = "#c8ccd4"
