@@ -1,0 +1,54 @@
+# themectl theme definition: Everforest Dark
+# Source: sainnhe/everforest (hard variant)
+
+[meta]
+name        = "everforest"
+label       = "Everforest Dark"
+dark        = true
+
+[tools]
+vim         = "everforest"
+bat         = "base16"
+vivid       = "one-dark"
+eza         = "everforest-dark"
+
+# vim extra settings injected after `colorscheme`
+[tools.vim_extra]
+g_everforest_background     = "'hard'"
+g_everforest_enable_italic  = "1"
+
+[tools.lightline]
+colorscheme = "everforest"
+
+# Alacritty 16-color ANSI palette + primary colors
+[alacritty.primary]
+background = "#2b3339"
+foreground = "#d3c6aa"
+
+[alacritty.cursor]
+text   = "#2b3339"
+cursor = "#a7c080"
+
+[alacritty.selection]
+text       = "#d3c6aa"
+background = "#475258"
+
+[alacritty.normal]
+black   = "#4b565c"
+red     = "#e67e80"
+green   = "#a7c080"
+yellow  = "#dbbc7f"
+blue    = "#7fbbb3"
+magenta = "#d699b6"
+cyan    = "#83c092"
+white   = "#d3c6aa"
+
+[alacritty.bright]
+black   = "#525c62"
+red     = "#e67e80"
+green   = "#a7c080"
+yellow  = "#dbbc7f"
+blue    = "#7fbbb3"
+magenta = "#d699b6"
+cyan    = "#83c092"
+white   = "#d3c6aa"

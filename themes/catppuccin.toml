@@ -1,0 +1,52 @@
+# themectl theme definition: Catppuccin Mocha
+# Source: catppuccin/vim
+
+[meta]
+name        = "catppuccin"
+label       = "Catppuccin Mocha"
+dark        = true
+
+[tools]
+vim         = "catppuccin_mocha"
+bat         = "Catppuccin Mocha"
+vivid       = "catppuccin-mocha"
+eza         = "catppuccin-mocha"
+
+[tools.vim_extra]
+g_catppuccin_flavour = "'mocha'"
+
+[tools.lightline]
+colorscheme = "catppuccin_mocha"
+
+# Alacritty 16-color ANSI palette + primary colors
+[alacritty.primary]
+background = "#1e1e2e"
+foreground = "#cdd6f4"
+
+[alacritty.cursor]
+text   = "#1e1e2e"
+cursor = "#f5e0dc"
+
+[alacritty.selection]
+text       = "#1e1e2e"
+background = "#585b70"
+
+[alacritty.normal]
+black   = "#45475a"
+red     = "#f38ba8"
+green   = "#a6e3a1"
+yellow  = "#f9e2af"
+blue    = "#89b4fa"
+magenta = "#f5c2e7"
+cyan    = "#94e2d5"
+white   = "#bac2de"
+
+[alacritty.bright]
+black   = "#585b70"
+red     = "#f38ba8"
+green   = "#a6e3a1"
+yellow  = "#f9e2af"
+blue    = "#89b4fa"
+magenta = "#f5c2e7"
+cyan    = "#94e2d5"
+white   = "#a6adc8"
