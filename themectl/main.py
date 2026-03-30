@@ -200,11 +200,11 @@ def apply_bat(theme: dict):
         text = BAT_CONF.read_text()
         # Replace existing --theme line
         if re.search(r"(?m)^--theme=", text):
-            text = re.sub(r"(?m)^--theme=.*", f"--theme={bat_theme}", text)
+            text = re.sub(r"(?m)^--theme=.*", f'--theme="{bat_theme}"', text)
         else:
-            text = text.rstrip() + f"\n--theme={bat_theme}\n"
+            text = text.rstrip() + f'\n--theme="{bat_theme}"\n'
     else:
-        text = f"--theme={bat_theme}\n"
+        text = f'--theme="{bat_theme}"\n'
 
     BAT_CONF.write_text(text)
     print(f"  [ok]   bat      → {BAT_CONF}")
