@@ -106,19 +106,22 @@ def apply_alacritty(theme: dict):
     backup(ALACRITTY_CONF)
     text = ALACRITTY_CONF.read_text()
 
-    # Strip every existing [colors.*] block
-    text = re.sub(
-        r"(?m)^\[colors(?:\.\w+)?\][^\[]*",
-        "",
-        text,
-    ).rstrip()
-
-    # Also strip the old themectl marker block if present
+    # Strip the themectl marker block first (start → end, inclusive)
     text = re.sub(
         r"\n# --- themectl colors start ---.*?# --- themectl colors end ---",
         "",
         text,
         flags=re.DOTALL,
+    )
+
+    # Strip any orphaned start-comment lines (no matching end marker)
+    text = re.sub(r"(?m)^# --- themectl colors start ---[^\n]*\n?", "", text)
+
+    # Strip any remaining [colors.*] blocks
+    text = re.sub(
+        r"(?m)^\[colors(?:\.\w+)?\][^\[]*",
+        "",
+        text,
     ).rstrip()
 
     label  = theme["meta"]["label"]
