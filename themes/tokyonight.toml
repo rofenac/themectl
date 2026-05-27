@@ -7,16 +7,16 @@ label       = "Tokyo Night"
 dark        = true
 
 [tools]
-vim         = "tokyonight"
-bat         = "Catppuccin Mocha"
+neovim      = "tokyonight-night"
+bat         = "Nord"
 vivid       = "tokyonight-night"
 eza         = "tokyonight"
 
-[tools.vim_extra]
+[tools.neovim_extra]
 g_tokyonight_style = "'night'"
 
-[tools.lightline]
-colorscheme = "OldHope"
+[tools.lualine]
+theme = "tokyonight"
 
 [alacritty.primary]
 background = "#1a1b26"

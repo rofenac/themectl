@@ -7,15 +7,15 @@ label       = "Dracula"
 dark        = true
 
 [tools]
-vim         = "dracula"
+neovim      = "dracula"
 bat         = "Dracula"
 vivid       = "dracula"
 eza         = "dracula"
 
-[tools.vim_extra]
+[tools.neovim_extra]
 
-[tools.lightline]
-colorscheme = "darcula"
+[tools.lualine]
+theme = "dracula"
 
 [alacritty.primary]
 background = "#282a36"

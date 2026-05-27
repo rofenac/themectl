@@ -7,15 +7,15 @@ label       = "One Dark"
 dark        = true
 
 [tools]
-vim         = "onedark"
+neovim      = "onedark"
 bat         = "OneHalfDark"
 vivid       = "one-dark"
 eza         = "one_dark"
 
-[tools.vim_extra]
+[tools.neovim_extra]
 
-[tools.lightline]
-colorscheme = "one"
+[tools.lualine]
+theme = "onedark"
 
 [alacritty.primary]
 background = "#282c34"

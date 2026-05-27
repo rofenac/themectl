@@ -7,18 +7,18 @@ label       = "Everforest Dark"
 dark        = true
 
 [tools]
-vim         = "everforest"
+neovim      = "everforest"
 bat         = "base16"
 vivid       = "one-dark"
 eza         = "everforest-dark"
 
-# vim extra settings injected after `colorscheme`
-[tools.vim_extra]
+# neovim extra settings injected after `colorscheme`
+[tools.neovim_extra]
 g_everforest_background     = "'hard'"
 g_everforest_enable_italic  = "1"
 
-[tools.lightline]
-colorscheme = "everforest"
+[tools.lualine]
+theme = "everforest"
 
 # Alacritty 16-color ANSI palette + primary colors
 [alacritty.primary]

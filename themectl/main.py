@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-themectl — unified theme switcher for alacritty, vim, bat, vivid/eza
+themectl — unified theme switcher for alacritty, neovim, bat, vivid/eza
 Usage:
     themectl set <theme>
     themectl list
@@ -30,7 +30,7 @@ except ImportError:
 #  Paths  (edit these if yours differ)
 # ──────────────────────────────────────────────
 ALACRITTY_CONF  = Path("~/.config/alacritty/alacritty.toml").expanduser()
-VIMRC           = Path("~/.vimrc").expanduser()
+NVIM_INIT       = Path("~/.config/nvim/init.lua").expanduser()
 BAT_CONF        = Path("~/.config/bat/config").expanduser()
 SHELL_RC        = Path("~/.zshrc").expanduser()   # where LS_COLORS lives
 EZA_THEMES_DIR  = Path("~/eza-themes/themes").expanduser()
@@ -52,6 +52,30 @@ def load_theme(name: str) -> dict:
         )
     with open(path, "rb") as f:
         return tomllib.load(f)
+
+
+def available_bat_themes() -> set[str]:
+    """Return the set of bat themes available on this VM."""
+    bat = shutil.which("batcat") or shutil.which("bat")
+    if not bat:
+        return set()
+
+    result = subprocess.run([bat, "--list-themes"], capture_output=True, text=True)
+    if result.returncode != 0:
+        return set()
+
+    return {line.strip() for line in result.stdout.splitlines() if line.strip()}
+
+
+def choose_bat_theme(requested: str) -> str:
+    """Pick a valid bat theme for the current machine."""
+    themes = available_bat_themes()
+    if requested in themes:
+        return requested
+
+    fallback = "base16" if "base16" in themes else (sorted(themes)[0] if themes else requested)
+    print(f"  [warn] bat theme '{requested}' not available; using '{fallback}'")
+    return fallback
 
 
 def list_themes() -> list[dict]:
@@ -137,56 +161,70 @@ def apply_alacritty(theme: dict):
 
 
 # ──────────────────────────────────────────────
-#  Vim
+#  Neovim
 # ──────────────────────────────────────────────
 
-def apply_vim(theme: dict):
-    if not VIMRC.exists():
-        print(f"  [skip] vimrc not found: {VIMRC}")
+def apply_neovim(theme: dict):
+    if not NVIM_INIT.exists():
+        print(f"  [skip] neovim init not found: {NVIM_INIT}")
         return
 
-    backup(VIMRC)
-    text  = VIMRC.read_text()
-    tname = theme["tools"]["vim"]
-    extra = theme["tools"].get("vim_extra", {})
-    ll    = theme["tools"].get("lightline", {})
+    backup(NVIM_INIT)
+    text  = NVIM_INIT.read_text()
+    tname = theme["tools"]["neovim"]
+    extra = theme["tools"].get("neovim_extra", {})
+    lualine = theme["tools"].get("lualine", {})
+    lightline = theme["tools"].get("lightline", {})
 
-    # Remove old vim_extra block (if present from a previous run)
+    # Remove old neovim_extra block (if present from a previous run)
     text = re.sub(
-        r'\n" --- themectl vim_extra start ---.*?" --- themectl vim_extra end ---\n',
+        r'\n-- --- themectl neovim_extra start ---.*?-- --- themectl neovim_extra end ---\n',
         "\n",
         text,
         flags=re.DOTALL,
     )
 
-    # Build the replacement for the colorscheme line
+    # Build the replacement for the colorscheme line.
+    # Support both the older `vim.cmd("colorscheme ...")` style and the newer
+    # `vim.cmd.colorscheme("...")` style used by this VM's init.lua.
     if extra:
-        extra_vimlines = []
+        extra_lines = []
         for k, v in extra.items():
-            varname = "g:" + k[2:]   # g_gruvbox_contrast_dark -> g:gruvbox_contrast_dark
-            extra_vimlines.append(f"let {varname} = {v}")
+            varname = "vim.g." + k[2:]   # g_gruvbox_contrast_dark -> vim.g.gruvbox_contrast_dark
+            extra_lines.append(f"{varname} = {v}")
         replacement = (
-            '" --- themectl vim_extra start ---\n'
-            + "\n".join(extra_vimlines)
-            + '\n" --- themectl vim_extra end ---\n'
-            + f"colorscheme {tname}"
+            '-- --- themectl neovim_extra start ---\n'
+            + "\n".join(extra_lines)
+            + '\n-- --- themectl neovim_extra end ---\n'
+            + f'vim.cmd.colorscheme("{tname}")'
         )
     else:
-        replacement = f"colorscheme {tname}"
+        replacement = f'vim.cmd.colorscheme("{tname}")'
 
-    # Single substitution: replace colorscheme line (with vim_extra prepended if needed)
-    text = re.sub(r"(?m)^colorscheme\s+\S+", replacement, text)
+    # Single substitution: replace colorscheme line (with neovim_extra prepended if needed)
+    text, n1 = re.subn(r'(?m)^vim\.cmd\.colorscheme\("[^"]+"\)', replacement, text)
+    if n1 == 0:
+        text = re.sub(r'(?m)^vim\.cmd\("colorscheme\s+[^"]+"\)', replacement, text)
 
-    # Lightline colorscheme
-    if ll.get("colorscheme"):
+    # Lualine theme used by the VM's current Neovim config.
+    if lualine.get("theme"):
         text = re.sub(
-            r"('colorscheme'\s*:\s*')[^']*(')",
-            rf"\g<1>{ll['colorscheme']}\g<2>",
+            r'(?m)^\s*theme\s*=\s*"[^"]+"\s*$',
+            f'      theme = "{lualine["theme"]}"',
+            text,
+            count=1,
+        )
+
+    # Backward compatibility for older Vim/lightline configs.
+    if lightline.get("colorscheme"):
+        text = re.sub(
+            r"(colorscheme\s*=\s*['\"])[^'\"]*(['\"])",
+            rf"\g<1>{lightline['colorscheme']}\g<2>",
             text,
         )
 
-    VIMRC.write_text(text)
-    print(f"  [ok]   vim      → {VIMRC}")
+    NVIM_INIT.write_text(text)
+    print(f"  [ok]   neovim   → {NVIM_INIT}")
 
 
 # ──────────────────────────────────────────────
@@ -196,7 +234,7 @@ def apply_vim(theme: dict):
 def apply_bat(theme: dict):
     BAT_CONF.parent.mkdir(parents=True, exist_ok=True)
 
-    bat_theme = theme["tools"]["bat"]
+    bat_theme = choose_bat_theme(theme["tools"]["bat"])
 
     if BAT_CONF.exists():
         backup(BAT_CONF)
@@ -267,8 +305,13 @@ def apply_eza(theme: dict):
         print(f"  [warn] eza theme file not found: {src}")
         return
 
+    EZA_THEME_LINK.parent.mkdir(parents=True, exist_ok=True)
     EZA_THEME_LINK.unlink(missing_ok=True)
-    EZA_THEME_LINK.symlink_to(src)
+    try:
+        EZA_THEME_LINK.symlink_to(src)
+    except OSError as exc:
+        print(f"  [warn] eza link failed: {exc}")
+        return
     print(f"  [ok]   eza      → {EZA_THEME_LINK} → {src}")
 
 
@@ -331,14 +374,14 @@ def cmd_set(args):
     print(f"\nApplying theme: {label}\n")
 
     apply_alacritty(theme)
-    apply_vim(theme)
+    apply_neovim(theme)
     apply_bat(theme)
     apply_vivid(theme)
     apply_eza(theme)
     save_state(args.theme)
 
     print(f"\nDone. Reload your shell and Alacritty to see all changes.")
-    print("Vim: run  :source ~/.vimrc  or restart vim.")
+    print("Neovim: run  :source ~/.config/nvim/init.lua  or restart nvim.")
 
 
 def cmd_list(args):
@@ -370,7 +413,7 @@ def cmd_preview(args):
 def main():
     parser = argparse.ArgumentParser(
         prog="themectl",
-        description="Unified theme switcher for alacritty, vim, bat, vivid/eza",
+        description="Unified theme switcher for alacritty, neovim, bat, vivid/eza",
     )
     sub = parser.add_subparsers(dest="command", required=True)
 

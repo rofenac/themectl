@@ -7,16 +7,16 @@ label       = "Catppuccin Mocha"
 dark        = true
 
 [tools]
-vim         = "catppuccin_mocha"
+neovim      = "catppuccin-nvim"
 bat         = "Catppuccin Mocha"
 vivid       = "catppuccin-mocha"
 eza         = "catppuccin-mocha"
 
-[tools.vim_extra]
+[tools.neovim_extra]
 g_catppuccin_flavour = "'mocha'"
 
-[tools.lightline]
-colorscheme = "catppuccin_mocha"
+[tools.lualine]
+theme = "catppuccin"
 
 # Alacritty 16-color ANSI palette + primary colors
 [alacritty.primary]

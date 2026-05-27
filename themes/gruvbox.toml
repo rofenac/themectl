@@ -7,19 +7,19 @@ label       = "Gruvbox Dark"
 dark        = true
 
 [tools]
-vim         = "gruvbox"
+neovim      = "gruvbox"
 bat         = "gruvbox-dark"
 vivid       = "gruvbox-dark"
 eza         = "gruvbox-dark"
 
-# vim extra settings injected after `colorscheme`
-[tools.vim_extra]
+# neovim extra settings injected after `colorscheme`
+[tools.neovim_extra]
 g_gruvbox_contrast_dark = "'hard'"
 g_gruvbox_sign_column   = "'bg0'"
 g_gruvbox_italics       = "1"
 
-[tools.lightline]
-colorscheme = "deus"
+[tools.lualine]
+theme = "gruvbox"
 
 # Alacritty 16-color ANSI palette + primary colors
 [alacritty.primary]
